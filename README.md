@@ -1,3 +1,3 @@
-# Pets Api 
+# Pugs Api 
 
 More information to come...
