@@ -1,7 +1,7 @@
 {
-  "name": "pets-api",
+  "name": "pugs-api",
   "version": "1.0.0",
-  "description": "API with CRUD for pets and their subdocuments(toys)",
+  "description": "API with CRUD for pugs",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",

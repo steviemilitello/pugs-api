@@ -40,7 +40,7 @@ router.get('/pugs', (req, res, next) => {
 })
 
 // SHOW
-//GET /pets/6244ef96004ab9a82fa36063
+//GET /pugs/6244ef96004ab9a82fa36063
 
 router.get('/pugs/:id', (req, res, next) => {
     // we get the id from req.params.id -> :id
@@ -51,6 +51,63 @@ router.get('/pugs/:id', (req, res, next) => {
         // otherwise pass to error handler
         .catch(next)
 
+})
+
+// CREATE
+// POST  /pugs
+
+router.post('/pugs', requireToken, (req, res, next) => {
+    // we brought in requireToken, so we can have access to req.user
+    req.body.pug.owner = req.user.id
+
+    Pug.create(req.body.pug)
+        .then(pug => {
+            // send a successful response like this
+            res.status(201).json({ pug: pug.toObject() })
+        })
+        // if an error occurs, pass it to the error handler
+        .catch(next)
+})
+
+// UPDATE
+// PATCH /pugs/6244ef96004ab9a82fa36063
+
+router.patch('/pugs/:id', requireToken, removeBlanks, (req, res, next) => {
+    // if the client attempts to change the owner of the pug, we can disallow that from the get go 
+    delete req.body.owner
+    // then we find the pug by the id 
+    Pug.findById(req.params.id)
+    // handle our 404 
+        .then(handle404)
+    // requireOwnership and update the pug 
+        .then(pug => {
+            requireOwnership(req, pug)
+
+            return pug.updateOne(req.body.pug)
+        })
+    // send a 204 no content if successful 
+        .then(() => res.sendStatus(204))
+    // pass to errorHandler if not successful
+        .catch(next)
+})
+
+router.delete('/pugs/:id', requireToken, (req, res, next) => {
+    // then find the pug by id
+    Pug.findById(req.params.id)
+    //first handle the 404 if any
+        .then(handle404)
+    // use requireOwnership middleware to make sure the right person is making this request
+        .then(pug => {
+            // requireOwnership needs two arguments
+            // these are the req, and the document itself
+            requireOwnership(req, pug)
+            // delete if the middleware doesnt throw an error
+            pug.deleteOne()
+        })
+        // send back a 204 no content status
+        .then(() => res.sendStatus(204))
+        // if error occurs, pass to the handler
+        .catch(next)
 })
 
 // ROUTES ABOVE HERE

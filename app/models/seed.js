@@ -41,7 +41,7 @@ mongoose.connect(db, {
         Pug.deleteMany({ owner: null })
             .then(deletedPugs => {
                 console.log('deleted pugs', deletedPugs)
-                // then we create using the startPets array
+                // then we create using the starterPugs array
                 // we'll use console logs to check if it's working or if there are errors
                 Pug.create(starterPugs)
                     .then(newPugs => {
