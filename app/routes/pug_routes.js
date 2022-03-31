@@ -39,6 +39,20 @@ router.get('/pugs', (req, res, next) => {
         .catch(next)
 })
 
+// SHOW
+//GET /pets/6244ef96004ab9a82fa36063
+
+router.get('/pugs/:id', (req, res, next) => {
+    // we get the id from req.params.id -> :id
+    Pug.findById(req.params.id)
+        .then(handle404)
+        // if its successful, respond with an object as json
+       .then(pug => res.status(200).json({ pug: pug.toObject() }))
+        // otherwise pass to error handler
+        .catch(next)
+
+})
+
 // ROUTES ABOVE HERE
 
 // keep at bottom of file
